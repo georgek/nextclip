@@ -959,10 +959,10 @@ int get_read(gzFile fp, FastQRead* read)
  *----------------------------------------------------------------------*/
 void write_read(FastQRead* read, FILE *fp)
 {
-    fprintf(fp, "%s\n", read->read_header);
-    fprintf(fp, "%s\n", read->read);
-    fprintf(fp, "%s\n", read->quality_header);
-    fprintf(fp, "%s\n", read->qualities);
+    gzprintf(fp, "%s\n", read->read_header);
+    gzprintf(fp, "%s\n", read->read);
+    gzprintf(fp, "%s\n", read->quality_header);
+    gzprintf(fp, "%s\n", read->qualities);
 }
 
 /*----------------------------------------------------------------------*
@@ -1340,9 +1340,9 @@ void process_files(MPStats* stats)
     for (i=0; i<num_categories; i++) {
         for (j=0; j<2; j++) {
             char filename[MAX_PATH_LENGTH];
-            sprintf(filename, "%s_R%d.fastq", stats->output_filenames[i], j+1);
+            sprintf(filename, "%s_R%d.fastq.gz", stats->output_filenames[i], j+1);
             printf("Opening output file %s\n", filename);
-            stats->output_fp[i][j] = fopen(filename, "w");
+            stats->output_fp[i][j] = gzopen(filename, "w");
             if (!stats->output_fp[i][j]) {
                 printf("Error: can't open file %s\n", filename);
                 exit(2);
@@ -1462,7 +1462,7 @@ void process_files(MPStats* stats)
     
     for (i=0; i<num_categories; i++) {
         for (j=0; j<2; j++) {
-            fclose(stats->output_fp[i][j]);
+            gzclose(stats->output_fp[i][j]);
         }
     }
     
